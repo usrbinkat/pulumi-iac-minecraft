@@ -4,7 +4,7 @@ git submodule add https://github.com/containercraft/konductor .devcontainer
 git submodule update --init --recursive .devcontainer
 cp -f .devcontainer/devcontainer.json .devcontainer.json
 
-git submodule update --remote --merge .devcontainer; cp -f .devcontainer/devcontainer.json .devcontainer.json # for subsequent maintenance updates
+git submodule update --remote --merge .devcontainer; cp -f .devcontainer/containers/kind/devcontainer.json .devcontainer.json # for subsequent maintenance updates
 
 # direnv
 
