@@ -1,0 +1,16 @@
+# devcontainer
+
+git submodule add https://github.com/containercraft/konductor .devcontainer
+git submodule update --init --recursive .devcontainer
+cp -f .devcontainer/devcontainer.json .devcontainer.json
+
+git submodule update --remote --merge .devcontainer; cp -f .devcontainer/devcontainer.json .devcontainer.json # for subsequent maintenance updates
+
+# direnv
+
+echo 'export KUBECONFIG=${PWD}/.kube/config' >> .envrc && direnv allow
+
+# KinD
+
+kind create cluster
+kind delete clusters kind
