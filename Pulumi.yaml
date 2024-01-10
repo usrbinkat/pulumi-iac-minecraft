@@ -1,0 +1,6 @@
+name: pulumi-minecraft-kubernetes
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: A pulumi infrastructure as code (iac) program for deploying and serving minecraft on kubernetes

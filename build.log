@@ -1,16 +1,64 @@
+#################################################################################
 # devcontainer
+# - initialize a new repo with devcontainer config
 
 git submodule add https://github.com/containercraft/konductor .devcontainer
 git submodule update --init --recursive .devcontainer
 cp -f .devcontainer/devcontainer.json .devcontainer.json
 
-git submodule update --remote --merge .devcontainer; cp -f .devcontainer/containers/kind/devcontainer.json .devcontainer.json # for subsequent maintenance updates
+# for subsequent maintenance updates
+git submodule update --remote --merge .devcontainer; cp -f .devcontainer/containers/kind/devcontainer.json .devcontainer.json
 
+
+#################################################################################
 # direnv
+# - initialize the new repo's direnv ./.envrc file
 
 echo 'export KUBECONFIG=${PWD}/.kube/config' >> .envrc && direnv allow
 
+
+#################################################################################
+# Pulumi Login (with token)
+# - Pulumi Access Tokens: https://app.pulumi.com/usrbinkat/settings/tokens
+# - Login to Pulumi Cloud for:
+#   - State Storage & Visibility
+#   - PulumiAI on the CLI
+#   - Environment Variables, Secrets, and Configuration Files
+
+pulumi login
+
+
+#################################################################################
+# Pulumi ESC
+# - Create a new Pulumi ESC environment for storing env vars, secrets, and configs
+
+pulumi env init usrbinkat/iac-developer-workshop
+eval (pulumi env open usrbinkat/iac-developer-workshop --format shell)
+
+
+#################################################################################
 # KinD
+# - create a new KinD cluster for IaC dev/test
+# - Load Kubeconfig into Pulumi ESC
 
 kind create cluster
-kind delete clusters kind
+pulumi env set usrbinkat/iac-developer-workshop kubeconfig (kubectl config view --raw --output json | jq . -c)
+
+
+#################################################################################
+# Create the project directory tree
+
+mkdir -p ./src/{common,kubernetes,cloudflare,digitalocean} .github/workflows
+touch -p .github/workflows/main.yml
+
+
+#################################################################################
+# Pulumi Project
+
+pulumi new --ai "Write a program using pulumi kubernetes helm v3 Release to deploy the itzg/minecraft-server helm chart on Kubernetes." --language python --name pulumi-minecraft-kubernetes --stack pulumi-iac-workshop --description "A pulumi infrastructure as code (iac) program for deploying and serving minecraft on kubernetes" --force --dir .
+
+
+#################################################################################
+# Check for a running minecraft pod
+
+kubectl get pods -owide
